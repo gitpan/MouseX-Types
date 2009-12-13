@@ -23,6 +23,7 @@ README
 t/001-make_immutable.t
 t/002-base.t
 t/003-isa-or.t
+t/004-parametarization.t
 t/00_compile.t
 xt/01_podspell.t
 xt/02_perlcritic.t
