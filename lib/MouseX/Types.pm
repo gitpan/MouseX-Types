@@ -2,7 +2,7 @@ package MouseX::Types;
 use 5.006_002;
 use Mouse::Exporter; # turns on strict and warnings
 
-our $VERSION = '0.02_01';
+our $VERSION = '0.02_02';
 
 use Mouse::Util::TypeConstraints ();
 
@@ -100,13 +100,18 @@ sub _initialize_import {
         return sub {
             if(@_){ # parameterization
                 my $param = shift;
-                if(@_){
-                    Carp::croak("Syntax error using type $type_constraint");
-                }
                 if(!(ref($param) eq 'ARRAY' && @{$param} == 1)){
                     Carp::croak("Syntax error using type $type_constraint (you must pass an ARRAY reference of a parameter type)");
                 }
-                return $type_constraint->parameterize(@{$param});
+                if(wantarray){
+                    return( $type_constraint->parameterize(@{$param}), @_ );
+                }
+                else{
+                    if(@_){
+                        Carp::croak("Too many arguments for $type_constraint");
+                    }
+                    return $type_constraint->parameterize(@{$param});
+                }
             }
             else{
                 return $type_constraint;
