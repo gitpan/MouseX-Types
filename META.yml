@@ -27,4 +27,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: git://github.com/yappo/p5-mousex-types.git
-version: 0.02_03
+version: 0.03
