@@ -2,7 +2,7 @@ package MouseX::Types;
 use 5.006_002;
 use Mouse::Exporter; # turns on strict and warnings
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Mouse::Util::TypeConstraints ();
 
@@ -61,11 +61,12 @@ sub _initialize_import {
         my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name)
             || Carp::croak(qq{"$name" is declared but not defined in $type_class});
 
-        push @exporting, $name;
+        push @exporting, $name, 'is_' . $name;
 
         no strict 'refs';
         no warnings 'redefine';
-        *{$type_class . '::' . $name} =$type_class->_generate_type($obj);
+        *{$type_class . '::'    . $name} = $type_class->_generate_type($obj);
+        *{$type_class . '::is_' . $name} = $obj->_compiled_type_constraint;
     }
 
     my($import, $unimport) = Mouse::Exporter->build_import_methods(
@@ -122,6 +123,8 @@ sub _initialize_import {
 
 1;
 __END__
+
+=encoding utf-8
 
 =head1 NAME
 
@@ -188,13 +191,15 @@ MouseX::Types - Organize your Mouse types in libraries
 
   1;
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Kazuhiro Osawa E<lt>yappo <at> shibuya <döt> plE<gt>
 
 Shawn M Moore
 
 tokuhirom
+
+Goro Fuji
 
 with plenty of code borrowed from L<MooseX::Types>
 
@@ -208,7 +213,10 @@ L<Mouse>
 
 L<MooseX::Types>
 
-=head1 LICENSE
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2008-2009, Kazuhiro Osawa and partly based on MooseX::Types, which
+is (c) Robert Sedlacek.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
